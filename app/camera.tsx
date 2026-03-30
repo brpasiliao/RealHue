@@ -1,7 +1,10 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { useRef } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, Dimensions, Text, View } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+
 
 export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -22,16 +25,37 @@ export default function Camera() {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      console.log(photo.uri);
+      try {
+        const photo = await cameraRef.current.takePictureAsync();
+        router.push({
+          pathname: '/(tabs)/analyze',
+          params: { uri: photo.uri },
+        });
+      } catch (err) {
+        console.error('Error taking picture:', err);
+      }
     } else {
       router.back();
     }
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <CameraView ref={cameraRef} style={{ flex: 1 }} />
+    <View style={{ 
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: '#C1876B',
+    }}>
+      <View style = {{
+        width: '100%',
+        height: width,
+      }}>
+        <CameraView 
+          ref={cameraRef} 
+          style={{ flex: 1 }} 
+          zoom={0.1}
+        />
+      </View>
+      
       <Button title="Take Picture" onPress={takePicture} />
     </View>
   );
