@@ -5,6 +5,7 @@ import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
+import { IconSymbol } from '@/components/ui/icon-symbol.ios';
 import { isColorMatch } from '@/utils/color-match';
 import { getPalette } from '@/utils/color-palette-picker';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
@@ -68,23 +69,23 @@ export default function Analyze() {
         style={styles.photoTaken}
       />
 
-      <View style={[styles.colorPalette, { top: height / 2 - width / 2 - tabBarHeight / 2 -80,
- }]}> 
+      <View style={styles.colorPalette}> 
       {
         loading ?
           (<View style={[styles.paletteItem, { backgroundColor: "#C1876B" }]} />) :
           colors.map((color, index) => (
             <View key={index} style={[styles.paletteItem, { 
               backgroundColor: color,
-              borderColor: isColorMatch(color, '#C1876B') ? '#ffffff' : 'transparent',
-              // height: isColorMatch(color, '#C1876B') ? 80 : 70,
-            }]} />
+            }]}>
+              {isColorMatch(color, '#C1876B') ?
+                <IconSymbol size={30} name="checkmark" color="white"  /> : null}
+            </View>
           ))
       } 
       </View>
 
       <Pressable 
-        style={[styles.actionButton, { top: height / 2 - width / 2 - tabBarHeight / 2 + 50, }]}
+        style={styles.actionButton}
         onPress={() => router.push('/camera')}
       >
         <ThemedText type="overline">Capture</ThemedText>
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
     width: width - 20,
     height: width - 20,
     position: 'absolute',
+    top: height / 2 - width / 2 + 10,
     left: 10,
   },
   colorPalette: {
@@ -113,18 +115,24 @@ const styles = StyleSheet.create({
     width: width - 20,
     justifyContent: 'center',
     position: 'absolute',
+    top: height / 2 - width / 2 -100,
   },
   paletteItem: {
     flex: 1,
-    height: 70,
-    borderWidth: 5,
+    height: 90,
     boxSizing: 'border-box',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   actionButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     backgroundColor: '#ffffff33',
     borderRadius: 8,
+    top: height / 2 - width / 2 + 50,
   },
+  // checkmark: {
+    
+  // },
 
 });

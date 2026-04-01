@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderColor: '#C1876B',
     borderWidth: 10,
-    borderRadius: 50,
+    borderRadius: 35,
   },
   cameraContainer: {
     width: '100%',

@@ -12,7 +12,6 @@ export default function Capture() {
       <Pressable 
         style={styles.captureButton} 
         onPress={() => {
-          router.replace('/(tabs)/capture/analyze');
           router.push('/camera');
         }}
       >
