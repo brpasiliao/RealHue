@@ -1,7 +1,9 @@
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { useRef } from 'react';
-import { Button, Dimensions, Text, View } from 'react-native';
+import { Button, Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,8 +29,8 @@ export default function Camera() {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-        router.push({
-          pathname: '/(tabs)/analyze',
+        router.replace({
+          pathname: '/(tabs)/capture/analyze',
           params: { uri: photo.uri },
         });
       } catch (err) {
@@ -40,24 +42,82 @@ export default function Camera() {
   };
 
   return (
-    <View style={{ 
-      flex: 1,
-      justifyContent: 'center',
-      backgroundColor: '#C1876B',
-    }}>
-      <View style = {{
-        width: '100%',
-        height: width,
-      }}>
-        <CameraView 
+    <View style={styles.body}>
+      <CameraView 
           ref={cameraRef} 
-          style={{ flex: 1 }} 
+          style={styles.camera} 
           zoom={0.1}
         />
-      </View>
+
+      <View style={styles.topShadow}/>
+      <View style={styles.bottomShadow}/>
+      <View style={styles.border}/>
+
+      <Pressable 
+        style={styles.exitButton}
+        onPress={() => router.dismissTo(('/(tabs)/capture'))}
+      >
+        <IconSymbol size={28} name="xmark" color="white" />
+      </Pressable>
       
-      <Button title="Take Picture" onPress={takePicture} />
+      <Pressable 
+        style={styles.shutterButton}
+        onPress={takePicture}
+      />
     </View>
   );
 
 }
+
+const styles = StyleSheet.create({
+  border: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    borderColor: '#C1876B',
+    borderWidth: 10,
+    borderRadius: 50,
+  },
+  cameraContainer: {
+    width: '100%',
+    height: '100%',
+  },
+  camera: {
+    flex: 1,
+  },
+  body: {
+    flex: 1,
+  },
+  shutterButton: {
+    position: 'absolute',
+    bottom: 90,
+    left: width /2 - 40,
+    width: 80,
+    height: 80,
+    borderRadius: '100%',
+    backgroundColor: '#ffffff',
+  },
+  exitButton: {
+    position: 'absolute',
+    bottom: 115,
+    left: 40,
+  },
+  topShadow: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: (height - width) / 2,
+    backgroundColor: '#00000088',
+  },
+  bottomShadow: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: (height - width) / 2,
+    backgroundColor: '#00000088',
+  },
+});
+
+
+
+// TODO: PICTURE NOT ALIGNED WITH CAMERA VIEW

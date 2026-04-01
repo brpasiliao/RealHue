@@ -1,12 +1,16 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 import { isColorMatch } from '@/utils/color-match';
 import { getPalette } from '@/utils/color-palette-picker';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+
+
+const { width, height } = Dimensions.get('window');
 
 // import ImageColors from 'react-native-image-colors';
 
@@ -14,13 +18,11 @@ import { getPalette } from '@/utils/color-palette-picker';
 export default function Analyze() {
 
   const { uri } = useLocalSearchParams<{ uri: string }>()
-  if (!uri) {
-    console.log(uri);
-    return;
-  };
+  if (!uri) return;
 
   const [colors, setColors] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const tabBarHeight = useBottomTabBarHeight();
 
   useEffect(() => {
     const tryGetAverageColor = async () => {
@@ -60,25 +62,33 @@ export default function Analyze() {
 
   return (
     <ThemedView style={styles.body}>
+
       <Image
         source={{ uri: uri }}
         style={styles.photoTaken}
       />
 
-      <ThemedText>{loading ? "Analyzing..." : ""}</ThemedText>
-
-      <View style={styles.colorPalette}> 
-        {
-          loading ?
-            (<View style={[styles.paletteItem, { backgroundColor: "#C1876B" }]} />) :
-            colors.map((color, index) => (
-              <View key={index} style={[styles.paletteItem, { 
-                backgroundColor: color,
-                borderColor: isColorMatch(color, '#C1876B') ? '#fff' : 'transparent',
-              }]} />
-            ))
-        }
+      <View style={[styles.colorPalette, { top: height / 2 - width / 2 - tabBarHeight / 2 -80,
+ }]}> 
+      {
+        loading ?
+          (<View style={[styles.paletteItem, { backgroundColor: "#C1876B" }]} />) :
+          colors.map((color, index) => (
+            <View key={index} style={[styles.paletteItem, { 
+              backgroundColor: color,
+              borderColor: isColorMatch(color, '#C1876B') ? '#ffffff' : 'transparent',
+              // height: isColorMatch(color, '#C1876B') ? 80 : 70,
+            }]} />
+          ))
+      } 
       </View>
+
+      <Pressable 
+        style={[styles.actionButton, { top: height / 2 - width / 2 - tabBarHeight / 2 + 50, }]}
+        onPress={() => router.push('/camera')}
+      >
+        <ThemedText type="overline">Capture</ThemedText>
+      </Pressable>
     </ThemedView>
   );
 }
@@ -92,19 +102,29 @@ const styles = StyleSheet.create({
     gap: 50,
   },
   photoTaken: {
-    width: 300,
-    height: 300,
+    width: width - 20,
+    height: width - 20,
+    position: 'absolute',
+    left: 10,
   },
   colorPalette: {
+    display: 'flex',
     flexDirection: 'row',
-    gap: 10,
+    width: width - 20,
+    justifyContent: 'center',
+    position: 'absolute',
   },
   paletteItem: {
-    width: 50, 
-    height: 50,
+    flex: 1,
+    height: 70,
     borderWidth: 5,
-    // borderColor: '#fff',
-    // borderStyle: 'solid',
-  }
+    boxSizing: 'border-box',
+  },
+  actionButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#ffffff33',
+    borderRadius: 8,
+  },
 
 });

@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  initialRouteName: '(tabs)',
 };
 
 export default function RootLayout() {
@@ -19,7 +19,6 @@ export default function RootLayout() {
         <Stack.Screen name="camera" options={{ 
           headerShown: false,
           presentation: 'fullScreenModal', 
-          // title: 'Modal' 
         }} />
       </Stack>
       <StatusBar style="auto" />
