@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import { useRef } from 'react';
 import { Button, Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 
-
 const { width, height } = Dimensions.get('window');
 
 

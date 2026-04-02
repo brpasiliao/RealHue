@@ -28,7 +28,6 @@ export default function Analyze() {
   useEffect(() => {
     const tryGetAverageColor = async () => {
       try {
-
         const palette = await getPalette(uri, 5);
         setColors(palette);
       } catch (err) {

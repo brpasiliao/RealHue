@@ -1,7 +1,7 @@
 const UPNG = require('upng-js');
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { Image } from 'react-native';
-
+import { rgbToHex } from './color-helper';
 type RGB = [number, number, number];
 
 
@@ -89,10 +89,7 @@ function kMeans(pixels: RGB[], k: number, iterations = 10): RGB[] {
   return centroids;
 }
 
-function rgbToHex([r, g, b]: RGB): string {
-  const toHex = (v: number) => v.toString(16).padStart(2, '0');
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-}
+
 
 // --- main export ---
 
