@@ -17,31 +17,33 @@ export default function Signup() {
   const [username, setUsername] = useState('');
   const [signUpError, setSignUpError] = useState('');
 
+
   async function handleSignUp() {
     try {
-      const { data, error } = await supabase.auth.signUp(
-        {
-          email: email,
-          password: password,
-          options: {
-            data: {
-              username: username,
-              color: getRandomColor(),
-            }
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: 
+        { data: {
+            username,
+            color: getRandomColor(),
           }
         }
-      );
+      });
 
       if (error) {
         setSignUpError(error.message);
+        console.log(error);
       } else if (password !== rePassword) {
         setSignUpError('Passwords must match');
+      } else if (data.user) {
+        router.replace('/(tabs)/profile')
       } else {
-        router.dismissTo('./login');
+        setSignUpError('User is null');
       }
 
-    } catch (err) {
-      console.error('Error logging in', err);
+    } catch (error) {
+      console.error('Error signing up', error);
     }
   }
 

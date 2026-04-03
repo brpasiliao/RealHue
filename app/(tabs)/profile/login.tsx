@@ -20,7 +20,7 @@ export default function Login() {
       if (error) {
         setLogInError(error.message);
       } else {
-        router.push('./account');
+        router.replace('/(tabs)/profile/account')
       }
 
     } catch (err) {

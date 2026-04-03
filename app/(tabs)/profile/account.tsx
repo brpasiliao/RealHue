@@ -1,24 +1,75 @@
 import { ThemedText } from '@/components/themed-text';
+import { useAuth } from '@/context/authContext';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-
+type Profile = {
+  username?: string;
+  color?: string;
+};
 
 export default function Account() {
+  const { user, session } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    if (!session || !user) {
+      router.replace('/(tabs)/profile')
+    }
+  }, [session, user]);
+
+  useEffect(() => {
+    if (!user) return;
+  
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+
+      if (error) {
+        console.log(error);
+      } else {
+        setProfile(data);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
+  
+
   async function handleLogOut() {
     const { error } = await supabase.auth.signOut();
     if (error) console.log(error);
     else {
-      router.dismissTo('./login')
+      router.replace('/(tabs)/profile')
     }
   }
+
+  if (!profile) {
+    return (
+      <View style={styles.body}>
+        <ThemedText>No profile</ThemedText>
+        <Pressable 
+        style={styles.actionButton}
+        onPress={handleLogOut}
+      >
+        <ThemedText type='default'>Log out</ThemedText>
+      </Pressable>
+      </View>
+    );
+  }
+    
 
   return (
     <View style={styles.body}>
       <ThemedText type='default'>
-        logged in!
+        Hello {profile.username}
       </ThemedText>
 
       <Pressable 
