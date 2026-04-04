@@ -66,11 +66,15 @@ export default function Analyze() {
   }
 
   async function postImage(filePath: string, userId: string) {
+    const { data: { publicUrl } } = supabase.storage
+      .from('captures')
+      .getPublicUrl(filePath)
+    
     const { error } = await supabase
       .from('captures')
       .insert({
           user_id: userId,
-          capture_url: filePath,
+          capture_url: publicUrl,
           palette: 
           {
             colors: colors,
