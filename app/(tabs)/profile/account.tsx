@@ -4,7 +4,7 @@ import { useAuth } from '@/context/authContext';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 type Profile = {
@@ -17,6 +17,7 @@ export default function Account() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [captures, setCaptures] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!session || !user) {
@@ -24,42 +25,49 @@ export default function Account() {
     }
   }, [session, user]);
 
-  useEffect(() => {
-    if (!user) return;
-  
-    const fetchProfile = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (error) {
-        console.log(error);
-      } else {
-        setProfile(data);
-      }
-    };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getUserCaptures();
+    setRefreshing(false);
+  }
 
-    const fetchCaptures = async () => {
-      const { data, error } = await supabase
-        .from('captures')
-        .select('*')
-        .eq('user_id', user.id);
-      if (error) {
-        console.log(error);
-      } else {
-        setCaptures(data);
-      }
+  const fetchProfile = async () => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    if (error) {
+      console.log(error);
+    } else {
+      setProfile(data);
     }
+  };
 
+  const fetchCaptures = async () => {
+    const { data, error } = await supabase
+      .from('captures')
+      .select('*')
+      .eq('user_id', user.id);
+    if (error) {
+      console.log(error);
+    } else {
+      setCaptures(data);
+    }
+  }
+
+  const getUserCaptures = async () => {
     try {
-      fetchProfile();
-      fetchCaptures();
+      await fetchProfile();
+      await fetchCaptures();
       setLoading(false);
     } catch (error) {
       console.error('Cannot fetch profile', error);
     }
-    
+  }
+  
+  useEffect(() => {
+    getUserCaptures();
   }, [user]);
   
 
@@ -103,19 +111,28 @@ export default function Account() {
           </Pressable>
         </View> 
       </ThemedView>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >  
         <ThemedView style={styles.gallery}>
         {
           loading ?
             (<ThemedText>Loading</ThemedText>) :
-            captures.map((capture, index) => {
+            <>
+            {captures.map((capture, index) => {
               return (
-              <Image
-                key={index}
-                source={{ uri: capture.capture_url }}
-                style={styles.capture}
-              />
-            )})
+                <Image
+                  key={index}
+                  source={{ uri: capture.capture_url }}
+                  style={styles.capture}
+                />
+            )})}
+            <View style={[styles.capture, styles.filler]} />
+            <View style={[styles.capture, styles.filler]} />
+            </>
+            
         }
         </ThemedView>
       </ScrollView>
@@ -170,5 +187,8 @@ const styles = StyleSheet.create({
   capture: {
     width: width * 0.33 - 2,
     height: width * 0.33 - 2,
+  },
+  filler: {
+    height: 0,
   }
 });

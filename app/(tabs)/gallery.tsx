@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
-import { Dimensions, Image, StyleSheet } from 'react-native';
+import { Dimensions, Image, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -11,26 +11,33 @@ const { width, height } = Dimensions.get('window');
 export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [captures, setCaptures] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getDaySubmission();
+    setRefreshing(false);
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  useEffect(() => {
-    const getDaySubmission = async () => {
-      const { data, error } = await supabase
-        .from('captures')
-        .select('*')
-        .gte('created_at', today.toISOString())
-        .lt('created_at', tomorrow.toISOString());
+  const getDaySubmission = async () => {
+    const { data, error } = await supabase
+      .from('captures')
+      .select('*')
+      .gte('created_at', today.toISOString())
+      .lt('created_at', tomorrow.toISOString());
 
-      if (data) setCaptures(data);
-      else console.log('Captures is null');
-    }
-
-    getDaySubmission();
+    if (data) setCaptures(data);
+    else console.log('Captures is null');
     setLoading(false);
+  }
+
+  useEffect(() => {
+    getDaySubmission();
   }, []);
 
   return (
@@ -44,21 +51,31 @@ export default function HomeScreen() {
           })}: #C1876B
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.gallery}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >  
+        <ThemedView style={styles.gallery}>
         {
           loading ?
             (<ThemedText>Loading</ThemedText>) :
-            captures.map((capture, index) => {
-              console.log(capture.capture_url);
-              return (
-              <Image
-                key={index}
-                source={{ uri: capture.capture_url }}
-                style={styles.capture}
-              />
-            )})
+            <>
+              {captures.map((capture, index) => {
+                console.log(capture.capture_url);
+                return (
+                  <Image
+                    key={index}
+                    source={{ uri: capture.capture_url }}
+                    style={styles.capture}
+                  />
+              )})}
+              <View style={[styles.capture, styles.filler]} />
+              <View style={[styles.capture, styles.filler]} />
+            </>
         }
-      </ThemedView>
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   )
 }
@@ -89,5 +106,8 @@ const styles = StyleSheet.create({
   capture: {
     width: width * 0.33 - 2,
     height: width * 0.33 - 2,
+  },
+  filler: {
+    height: 0,
   }
 });

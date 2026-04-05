@@ -18,21 +18,24 @@ const { width, height } = Dimensions.get('window');
 
 export default function Analyze() {
   const { uri } = useLocalSearchParams<{ uri: string }>()
-  if (!uri) {
-    console.log('Error getting image uri');
-    return;
-  }
+  useEffect(() => {
+    if (!uri) {
+      console.log('Error getting image uri');
+      router.replace('./prompt')
+    }
+  }, [uri]);
 
   const { user, session } = useAuth();
-  if (!user || !session) {
-    router.replace('./prompt');
-    return;
-  }
+  // useEffect(() => {
+  //   if (!session || !user) {
+  //     router.replace('./prompt')
+  //   }
+  // }, [session, user]);
 
   const [colors, setColors] = useState<string[]>([]);
   const [passingColors, setPassingColors] = useState<string[]>([]);
   const [loadingAnalysis, setLoadingAnalysis] = useState(true);
-  const { submitCapture, submitted } = useSubmitCapture(user.id, uri, colors, passingColors);
+  const { submitCapture, submitted } = useSubmitCapture(user?.id, uri, colors, passingColors);
 
   useEffect(() => {
     const tryGetAverageColor = async () => {
