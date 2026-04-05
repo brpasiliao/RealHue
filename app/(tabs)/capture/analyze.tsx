@@ -1,5 +1,4 @@
 import { useAuth } from '@/context/authContext';
-import { supabase } from '@/lib/supabase';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
@@ -9,23 +8,31 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 import { IconSymbol } from '@/components/ui/icon-symbol.ios';
+import { useSubmitCapture } from '@/hooks/use-submit-capture';
 import { isColorMatch } from '@/utils/color-match';
 import { getPalette } from '@/utils/color-palette-picker';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
 
 export default function Analyze() {
   const { uri } = useLocalSearchParams<{ uri: string }>()
-  if (!uri) return;
+  if (!uri) {
+    console.log('Error getting image uri');
+    return;
+  }
 
   const { user, session } = useAuth();
+  if (!user || !session) {
+    router.replace('./prompt');
+    return;
+  }
 
   const [colors, setColors] = useState<string[]>([]);
   const [passingColors, setPassingColors] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const tabBarHeight = useBottomTabBarHeight();
+  const [loadingAnalysis, setLoadingAnalysis] = useState(true);
+  const { submitCapture, submitted } = useSubmitCapture(user.id, uri, colors, passingColors);
 
   useEffect(() => {
     const tryGetAverageColor = async () => {
@@ -36,64 +43,21 @@ export default function Analyze() {
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        setLoadingAnalysis(false);
       }
     }
     tryGetAverageColor();
-  }, [loading])
-
-  async function uploadImage(uri: string, userId: string): Promise<string | null> {
-    // const file = new File(uri)
-    // const base64 = await file.text() // reads file contents
-
-    const response = await fetch(uri)
-    const arrayBuffer = await response.arrayBuffer();
-
-    const filePath = `${userId}/${Date.now()}.jpg`;
-
-    const { data, error } = await supabase.storage
-      .from('captures')
-      .upload(filePath, arrayBuffer, {
-        contentType: 'image/jpeg',
-        upsert: false,
-      });
-
-    if (error) {
-      console.log(error);
-      return null;
-    }
-    return filePath;
-  }
-
-  async function postImage(filePath: string, userId: string) {
-    const { data: { publicUrl } } = supabase.storage
-      .from('captures')
-      .getPublicUrl(filePath)
-    
-    const { error } = await supabase
-      .from('captures')
-      .insert({
-          user_id: userId,
-          capture_url: publicUrl,
-          palette: 
-          {
-            colors: colors,
-            passoingColors: passingColors,
-          }
-      });
-
-    if (error) {
-      console.log(error);
-      return null;
-    }
-  }
+  }, [loadingAnalysis])
 
   async function handleSubmit() {
-    try {
-      const filePath = await uploadImage(uri, user.id);
-      if (filePath) await postImage(filePath, user.id);
-    } catch (error) {
-      console.error('Could not submit capture', error);
+    if (!session || !user) {
+      Toast.show({
+        type: 'error',
+        text1: 'Log in to submit your capture',
+      });
+
+    } else {
+      submitCapture();
     }
   }
 
@@ -107,7 +71,7 @@ export default function Analyze() {
 
       <View style={styles.colorPalette}> 
       {
-        loading ?
+        loadingAnalysis ?
           (<View style={[styles.paletteItem, { backgroundColor: "#C1876B" }]} />) :
           colors.map((color, index) => (
             <View key={index} style={[styles.paletteItem, { 
@@ -120,28 +84,33 @@ export default function Analyze() {
       } 
       </View>
 
-      <View style={styles.buttons}>
-        <Pressable 
-          style={styles.button}
-          onPress={() => router.push('/camera')}
-        >
-          <ThemedText type="overline">
-            Recapture
-          </ThemedText>
-        </Pressable>
+      { 
+        submitted ? (
+          <ThemedText type='default' style={styles.submittedMessage}>Submitted capture for today!</ThemedText>
+        ) : (
+          <View style={styles.buttons}>
+            <Pressable 
+              style={styles.button}
+              onPress={() => router.push('/camera')}
+            >
+              <ThemedText type="overline">
+                Recapture
+              </ThemedText>
+            </Pressable>
 
-        {passingColors.length > 0 ?
-          <Pressable 
-            style={styles.button}
-            onPress={handleSubmit}
-          > 
-            <ThemedText type="overline">Submit</ThemedText>
-          </Pressable> :
-          <></>
-        }
-          
-      </View>
-      
+            {passingColors.length > 0 ?
+              <Pressable 
+                style={styles.button}
+                onPress={handleSubmit}
+              > 
+                <ThemedText type="overline">Submit</ThemedText>
+              </Pressable> :
+              <></>
+            }
+              
+          </View>
+        )
+      }
     </ThemedView>
   );
 }
@@ -187,5 +156,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff33',
     borderRadius: 8,
   },
+  submittedMessage: {
+    top: height / 2 - width / 2 + 50,
+  }
 
 });

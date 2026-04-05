@@ -1,11 +1,10 @@
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
 import { AuthProvider } from '../context/authContext';
-
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
@@ -24,6 +23,7 @@ export default function RootLayout() {
             presentation: 'fullScreenModal', 
           }} />
         </Stack>
+        <Toast />
         <StatusBar style="auto" />
       </ThemeProvider>
     </AuthProvider>

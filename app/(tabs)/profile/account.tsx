@@ -4,7 +4,7 @@ import { useAuth } from '@/context/authContext';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 type Profile = {
@@ -103,7 +103,8 @@ export default function Account() {
           </Pressable>
         </View> 
       </ThemedView>
-      <ThemedView style={styles.gallery}>
+      <ScrollView>
+        <ThemedView style={styles.gallery}>
         {
           loading ?
             (<ThemedText>Loading</ThemedText>) :
@@ -116,7 +117,8 @@ export default function Account() {
               />
             )})
         }
-      </ThemedView>
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   )
 }
@@ -137,6 +139,7 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     gap: 20,
+    zIndex: 1,
   },
   profileColor: {
     width: 70,

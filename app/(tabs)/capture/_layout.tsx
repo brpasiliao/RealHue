@@ -4,6 +4,7 @@ export default function CaptureLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
+      <Stack.Screen name="prompt" />
       <Stack.Screen name="analyze" />
     </Stack>
   )
