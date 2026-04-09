@@ -22,12 +22,11 @@ export default function TabLayout() {
         position: 'absolute',
         borderTopWidth: 0,
         elevation: 0,
-        // backgroundColor: theme?.background,
       },
       tabBarBackground: () => (
         <BlurView
           intensity={40}
-          tint="light"
+          tint={theme.name}
           style={StyleSheet.absoluteFill}
         />
       ),

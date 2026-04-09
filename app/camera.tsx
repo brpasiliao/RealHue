@@ -56,7 +56,7 @@ export default function Camera() {
 
       <Pressable 
         style={styles.exitButton}
-        onPress={() => router.dismissTo(('/(tabs)/capture'))}
+        onPress={() => router.dismissTo(('/(tabs)/capture/prompt'))}
       >
         <IconSymbol size={28} name="xmark" color="white" />
       </Pressable>

@@ -1,30 +1,31 @@
 import { ThemedText } from '@/components/themed-text';
 import { useDailyColor } from '@/context/dailyColorContext';
 import { useCheckSubmit } from '@/hooks/use-check-submit';
-import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 export default function Prompt() {
   const { theme } = useDailyColor();
-  const { submission, loading } = useCheckSubmit();
+  const { submission } = useCheckSubmit();
 
-  useEffect(() => {
-    if (submission) {
-      router.replace({
-        pathname: '/(tabs)/capture/analyze',
-        params: { uri: submission.capture_url },
-      });
-    }
-  }, [loading]);
-  
+  useFocusEffect(
+    useCallback(() => {
+      if (submission) {
+        router.replace({
+          pathname: '/(tabs)/capture/analyze',
+          params: { uri: submission.capture_url },
+        });
+      }
+    }, [submission])
+  );
 
   return (
     <View style={[styles.body, {backgroundColor: theme.main}]}>
       <ThemedText type="overline">Today's color is</ThemedText>
       <ThemedText type="headline">{theme.main}</ThemedText>
       <Pressable 
-        style={styles.captureButton} 
+        style={[styles.captureButton, {backgroundColor: theme.background}]} 
         onPress={() => {
           router.push('/camera');
         }}
@@ -46,7 +47,6 @@ const styles = StyleSheet.create({
   captureButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#ffffff33',
     borderRadius: 8,
   },
 });

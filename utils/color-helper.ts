@@ -43,6 +43,6 @@ export function getRandomColor(): string {
 
 export function getThemeFromColor(color: string): any {
   const hsl = hexToHsl(color);
-  const base = hsl[2] > 50 ? Colors.light : Colors.dark;
+  const base = hsl[2] < 50 ? Colors.light : Colors.dark;
   return { ...base, main: color };
 }

@@ -1,9 +1,9 @@
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Dimensions, Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { Dimensions, Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,6 +13,7 @@ export default function Login() {
   const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
   const [logInError, setLogInError] = useState('');
+  const { theme } = useDailyColor();
 
   async function handleLogIn() {
     try {
@@ -34,13 +35,13 @@ export default function Login() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ThemedView style={styles.body}>
+      <View style={[styles.body, {backgroundColor: theme.main}]}>
         <ThemedText type="title">Log In</ThemedText>
 
-        <ThemedView> 
+        <View> 
           <ThemedText type="default">Email: </ThemedText>
           <TextInput 
-            style={styles.inputField}
+            style={[styles.inputField, {backgroundColor: theme.active}]}
             value={email}
             onChangeText={setEmail}
             onBlur={() => {
@@ -55,21 +56,21 @@ export default function Login() {
           <ThemedText type="default">
             {emailError ? emailError : ''}
           </ThemedText>
-        </ThemedView>
+        </View>
 
-        <ThemedView> 
+        <View> 
           <ThemedText type="default">Password: </ThemedText>
           <TextInput 
-            style={styles.inputField}
+            style={[styles.inputField, {backgroundColor: theme.active}]}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={true} 
             placeholder="••••••••"/>
-        </ThemedView>
+        </View>
 
         <Pressable 
           onPress={handleLogIn}
-          style={styles.actionButton}
+          style={[styles.actionButton, {backgroundColor: theme.active, borderColor: theme.neutral}]}
         >
           <ThemedText type="default">Log in</ThemedText>
         </Pressable>
@@ -77,17 +78,17 @@ export default function Login() {
           {logInError ? logInError : ''}
         </ThemedText>
         
-        <ThemedView style={styles.span}>
+        <View style={styles.span}>
           <ThemedText type="default">Don't have an account?</ThemedText>
           <Pressable onPress={() => router.push('./signup')}>
-            <ThemedText type="default">Sign Up</ThemedText>
+            <ThemedText type="default"> Sign Up</ThemedText>
           </Pressable>
-        </ThemedView>
+        </View>
         
         <Pressable onPress={handleForgotPassword}>
           <ThemedText>Forgot Password?</ThemedText>
         </Pressable>
-      </ThemedView> 
+      </View> 
     </TouchableWithoutFeedback>
     
   );
@@ -97,23 +98,18 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     justifyContent: 'center',
-    width: width - 60,
-    margin: 'auto',
+    paddingHorizontal: 30,
     gap: 10,
   },
   inputField: {
     padding: 10,
-    color: 'white',
-    backgroundColor: '#ffffff33',
   },
   span: {
     flexDirection: 'row',
   },
   actionButton: {
     padding: 10,
-    backgroundColor: '#ffffff33',
     justifyContent: 'center',
-    borderColor: 'white',
     borderWidth: 2,
   }
 });

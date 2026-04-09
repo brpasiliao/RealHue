@@ -7,7 +7,7 @@ import { useSubmitCapture } from '@/hooks/use-submit-capture';
 import { isColorMatch } from '@/utils/color-match';
 import { getPalette } from '@/utils/color-palette-picker';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
@@ -30,7 +30,20 @@ export default function Analyze() {
   const { theme } = useDailyColor();
   const { submitCapture, submitted } = useSubmitCapture(user?.id, uri, colors, passingColors);
   const { submission, loading } = useCheckSubmit(); 
-  
+
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return;
+    }
+
+    if (!session || !user) {
+      router.dismissTo('/(tabs)/capture/prompt')
+    }
+  }, [session, user]);
+
   useEffect(() => {
     if (loading) return;
 
@@ -46,8 +59,8 @@ export default function Analyze() {
         const palette = await getPalette(uri, 5);
         setColors(palette);
         setPassingColors(palette.filter(color => isColorMatch(color, theme.main)));
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
       } finally {
         setLoadingAnalysis(false);
       }

@@ -45,7 +45,7 @@ export default function HomeScreen() {
     <View style={[styles.body, {backgroundColor: theme.main}]}>
       <BlurView
         intensity={40}
-        tint="light"
+        tint={theme.name}
         style={[StyleSheet.absoluteFill, styles.header]}
       >
         <ThemedText type='title'>{

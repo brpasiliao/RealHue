@@ -1,10 +1,10 @@
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
 import { getRandomColor } from '@/utils/color-helper';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Dimensions, Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { Dimensions, Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,7 +16,7 @@ export default function Signup() {
   const [rePassword, setRePassword] = useState('');
   const [username, setUsername] = useState('');
   const [signUpError, setSignUpError] = useState('');
-
+  const { theme } = useDailyColor();
 
   async function handleSignUp() {
     try {
@@ -49,14 +49,14 @@ export default function Signup() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ThemedView style={styles.body}>
+      <View style={[styles.body, {backgroundColor: theme.main}]}>
 
         <ThemedText type='title'>Sign Up</ThemedText>
 
-        <ThemedView> 
+        <View> 
           <ThemedText type='default'>Email: </ThemedText>
           <TextInput 
-            style={styles.inputField}
+            style={[styles.inputField, {backgroundColor: theme.active}]}
             value={email}
             onChangeText={setEmail}
             onBlur={() => {
@@ -71,32 +71,32 @@ export default function Signup() {
           <ThemedText type='default'>
             {emailError ? emailError : ''}
           </ThemedText>
-        </ThemedView>
+        </View>
 
-        <ThemedView> 
+        <View> 
           <ThemedText type='default'>Username: </ThemedText>
           <TextInput 
-            style={styles.inputField}
+            style={[styles.inputField, {backgroundColor: theme.active}]}
             value={username}
             onChangeText={setUsername}
             placeholder="user_name"
           />
-        </ThemedView>
+        </View>
 
-        <ThemedView> 
+        <View> 
           <ThemedText type='default'>Password: </ThemedText>
           <TextInput 
-            style={styles.inputField}
+            style={[styles.inputField, {backgroundColor: theme.active}]}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={true} 
             placeholder="••••••••"/>
-        </ThemedView>
+        </View>
 
-        <ThemedView> 
+        <View> 
           <ThemedText type='default'>Repeat password: </ThemedText>
           <TextInput 
-            style={styles.inputField}
+            style={[styles.inputField, {backgroundColor: theme.active}]}
             value={rePassword}
             onChangeText={setRePassword}
             secureTextEntry={true} 
@@ -105,10 +105,10 @@ export default function Signup() {
           <ThemedText type='default'>
             {password !== rePassword ? 'Passwords must match' : ''}
           </ThemedText>
-        </ThemedView>
+        </View>
 
         <Pressable 
-          style={styles.actionButton}
+          style={[styles.actionButton, {backgroundColor: theme.active, borderColor: theme.neutral}]}
           onPress={handleSignUp}
         >
           <ThemedText type='default'>Sign Up</ThemedText>
@@ -117,14 +117,14 @@ export default function Signup() {
           {signUpError}
         </ThemedText>
         
-        <ThemedView style={styles.span}>
+        <View style={styles.span}>
           <ThemedText type='default'>Already have an account?</ThemedText>
-          <Pressable onPress={() => router.push('./login')}>
-            <ThemedText type='default'>Log in</ThemedText>
+          <Pressable onPress={() => router.dismissTo('./login')}>
+            <ThemedText type='default'> Log in</ThemedText>
           </Pressable>
-        </ThemedView>
+        </View>
         
-      </ThemedView> 
+      </View> 
     </TouchableWithoutFeedback>
   );
 }
@@ -133,14 +133,12 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     justifyContent: 'center',
-    width: width - 60,
-    margin: 'auto',
+    paddingHorizontal: 30,
     gap: 10,
   },
   inputField: {
     padding: 10,
     color: 'white',
-    backgroundColor: '#ffffff33',
   },
   span: {
     flexDirection: 'row',

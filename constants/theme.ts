@@ -7,12 +7,14 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
+    name: 'light',
     main: '',
     neutral: '#EAEAEA',
     background: '#EAEAEA55',
     active: '#EAEAEA22',
   },
   dark: {
+    name: 'dark',
     main: '',
     neutral: '#151515',
     background: '#15151555',
