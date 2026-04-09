@@ -23,6 +23,7 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'xmark': 'close',
   'checkmark': 'check',
+  'face.smiling': 'emoji-emotions',
 } as IconMapping;
 
 /**

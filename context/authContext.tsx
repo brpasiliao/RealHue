@@ -1,4 +1,3 @@
-// AuthContext.tsx
 import { Session, User } from '@supabase/supabase-js';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
@@ -37,5 +36,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook to use anywhere
 export const useAuth = () => useContext(AuthContext);

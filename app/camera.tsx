@@ -1,4 +1,5 @@
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useDailyColor } from '@/context/dailyColorContext';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { useRef } from 'react';
@@ -10,6 +11,7 @@ const { width, height } = Dimensions.get('window');
 export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
+  const { theme } = useDailyColor();
 
   if (!permission) {
     return <View />;
@@ -50,7 +52,7 @@ export default function Camera() {
 
       <View style={styles.topShadow}/>
       <View style={styles.bottomShadow}/>
-      <View style={styles.border}/>
+      <View style={[styles.border, {borderColor: theme.main}]}/>
 
       <Pressable 
         style={styles.exitButton}
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    borderColor: '#C1876B',
+    // borderColor: '#C1876B',
     borderWidth: 10,
     borderRadius: 35,
   },

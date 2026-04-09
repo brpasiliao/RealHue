@@ -1,3 +1,5 @@
+import { Colors } from '@/constants/theme';
+
 type RGB = [number, number, number];
 
 export function rgbToHex([r, g, b]: RGB): string {
@@ -37,4 +39,10 @@ export function getRandomColor(): string {
     Math.floor(Math.random() * 196) + 30,
     Math.floor(Math.random() * 196) + 30
   ])
+}
+
+export function getThemeFromColor(color: string): any {
+  const hsl = hexToHsl(color);
+  const base = hsl[2] > 50 ? Colors.light : Colors.dark;
+  return { ...base, main: color };
 }

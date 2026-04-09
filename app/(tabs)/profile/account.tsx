@@ -1,23 +1,29 @@
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAuth } from '@/context/authContext';
+import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
+import { getThemeFromColor } from '@/utils/color-helper';
+import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 type Profile = {
-  username?: string;
-  color?: string;
+  username: string;
+  color: string;
 };
+
 
 export default function Account() {
   const { user, session } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { theme } = useDailyColor();
+  const [profile, setProfile] = useState<Profile>({username: '', color:''});
   const [captures, setCaptures] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const profileTheme = getThemeFromColor(profile?.color);
 
   useEffect(() => {
     if (!session || !user) {
@@ -92,12 +98,18 @@ export default function Account() {
       </View>
     );
   }
-    
 
+    
   return (
-    <ThemedView style={styles.body}>
-      <ThemedView style={styles.header}>  
-        <View style={[styles.profileColor, {backgroundColor: profile.color}]} />
+    <View style={[styles.body, {backgroundColor: profileTheme.main}]}>
+      <BlurView
+        intensity={40}
+        tint="light"
+        style={[StyleSheet.absoluteFill, styles.header]}
+      >
+        <View style={[styles.profileIconContainer, {borderColor: profileTheme.neutral}]}>
+          <IconSymbol size={50} name="face.smiling" color={profileTheme.neutral} />
+        </View>
         <View style={styles.profileInfo}>
           <ThemedText type='profile'>
             {profile.username}
@@ -110,13 +122,20 @@ export default function Account() {
             <ThemedText type='profile'>Log out</ThemedText>
           </Pressable>
         </View> 
-      </ThemedView>
+      </BlurView>
+      
       <ScrollView
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            tintColor={profileTheme.neutral}
+            colors={[profileTheme.neutral]}
+            progressViewOffset={150}
+          />
         }
       >  
-        <ThemedView style={styles.gallery}>
+        <View style={styles.gallery}>
         {
           loading ?
             (<ThemedText>Loading</ThemedText>) :
@@ -134,15 +153,14 @@ export default function Account() {
             </>
             
         }
-        </ThemedView>
+        </View>
       </ScrollView>
-    </ThemedView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   body: {
-    height: height - 50,
     flex: 1,
   },
   header: {
@@ -150,7 +168,6 @@ const styles = StyleSheet.create({
     top: 0,
     height: 150,
     width: '100%',
-    backgroundColor: '#C1876B',
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
     padding: 20,
@@ -158,10 +175,13 @@ const styles = StyleSheet.create({
     gap: 20,
     zIndex: 1,
   },
-  profileColor: {
+  profileIconContainer: {
     width: 70,
     height: 70,
     borderRadius: 10,
+    borderWidth: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profileInfo: {
     flexDirection: 'column',
@@ -179,10 +199,10 @@ const styles = StyleSheet.create({
   gallery: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // justifyContent: 'space-between',
     alignSelf: 'center',
     gap: 4.5,
     marginTop: 154,
+    minHeight: height - 154,
   },
   capture: {
     width: width * 0.33 - 2,

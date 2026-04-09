@@ -1,14 +1,28 @@
-import { Pressable, StyleSheet } from 'react-native';
-
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { useDailyColor } from '@/context/dailyColorContext';
+import { useCheckSubmit } from '@/hooks/use-check-submit';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-export default function Capture() {
+export default function Prompt() {
+  const { theme } = useDailyColor();
+  const { submission, loading } = useCheckSubmit();
+
+  useEffect(() => {
+    if (submission) {
+      router.replace({
+        pathname: '/(tabs)/capture/analyze',
+        params: { uri: submission.capture_url },
+      });
+    }
+  }, [loading]);
+  
+
   return (
-    <ThemedView style={styles.body}>
+    <View style={[styles.body, {backgroundColor: theme.main}]}>
       <ThemedText type="overline">Today's color is</ThemedText>
-      <ThemedText type="headline">#C1876B</ThemedText>
+      <ThemedText type="headline">{theme.main}</ThemedText>
       <Pressable 
         style={styles.captureButton} 
         onPress={() => {
@@ -17,7 +31,7 @@ export default function Capture() {
       >
         <ThemedText type="overline">Capture</ThemedText>
       </Pressable>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -26,7 +40,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#C1876B',
+    // backgroundColor: '#C1876B',
     gap: 50,
   },
   captureButton: {

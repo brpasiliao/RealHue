@@ -40,10 +40,10 @@ export function useSubmitCapture(userId: string, uri: string, colors: string[], 
     const { error } = await supabase
       .from('captures')
       .insert({
-          user_id: userId,
-          capture_url: publicUrl,
-          colors: colors,
-          passingColors: passingColors,
+        user_id: userId,
+        capture_url: publicUrl,
+        colors: colors,
+        passingColors: passingColors,
       });
 
     if (error) {

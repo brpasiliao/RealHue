@@ -21,7 +21,7 @@ export function useCheckSubmit(): UseCheckSubmitResult {
       return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);

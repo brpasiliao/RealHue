@@ -1,16 +1,14 @@
-import { useAuth } from '@/context/authContext';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
-
-
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-
-import { IconSymbol } from '@/components/ui/icon-symbol.ios';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useAuth } from '@/context/authContext';
+import { useDailyColor } from '@/context/dailyColorContext';
+import { useCheckSubmit } from '@/hooks/use-check-submit';
 import { useSubmitCapture } from '@/hooks/use-submit-capture';
 import { isColorMatch } from '@/utils/color-match';
 import { getPalette } from '@/utils/color-palette-picker';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
@@ -25,32 +23,37 @@ export default function Analyze() {
     }
   }, [uri]);
 
-  const { user, session } = useAuth();
-  // useEffect(() => {
-  //   if (!session || !user) {
-  //     router.replace('./prompt')
-  //   }
-  // }, [session, user]);
-
   const [colors, setColors] = useState<string[]>([]);
   const [passingColors, setPassingColors] = useState<string[]>([]);
   const [loadingAnalysis, setLoadingAnalysis] = useState(true);
+  const { user, session } = useAuth();
+  const { theme } = useDailyColor();
   const { submitCapture, submitted } = useSubmitCapture(user?.id, uri, colors, passingColors);
-
+  const { submission, loading } = useCheckSubmit(); 
+  
   useEffect(() => {
-    const tryGetAverageColor = async () => {
+    if (loading) return;
+
+    if (submission) {
+      setColors(submission.colors);
+      setPassingColors(submission.passingColors);
+      setLoadingAnalysis(false);
+      return;
+    }
+
+    const tryGetPalette = async () => {
       try {
         const palette = await getPalette(uri, 5);
         setColors(palette);
-        setPassingColors(colors.filter(color => isColorMatch(color, '#C1876B')));
+        setPassingColors(palette.filter(color => isColorMatch(color, theme.main)));
       } catch (err) {
         console.error(err);
       } finally {
         setLoadingAnalysis(false);
       }
     }
-    tryGetAverageColor();
-  }, [loadingAnalysis])
+    tryGetPalette();
+  }, [uri, loading]);
 
   async function handleSubmit() {
     if (!session || !user) {
@@ -65,7 +68,7 @@ export default function Analyze() {
   }
 
   return (
-    <ThemedView style={styles.body}>
+    <View style={[styles.body, {backgroundColor: theme.main}]}>
 
       <Image
         source={{ uri: uri }}
@@ -75,25 +78,26 @@ export default function Analyze() {
       <View style={styles.colorPalette}> 
       {
         loadingAnalysis ?
-          (<View style={[styles.paletteItem, { backgroundColor: "#C1876B" }]} />) :
+          (<View style={[styles.paletteItem, { backgroundColor: theme.main }]} />) :
           colors.map((color, index) => (
             <View key={index} style={[styles.paletteItem, { 
               backgroundColor: color,
             }]}>
               {passingColors.includes(color) ?
-                <IconSymbol size={30} name="checkmark" color="white"  /> : null}
+                <IconSymbol size={30} name="checkmark" color={theme.neutral}  /> : null}
             </View>
           ))
       } 
       </View>
 
-      { 
-        submitted ? (
+      <View style={styles.infoContainer}>
+        { 
+        submitted || submission ? (
           <ThemedText type='default' style={styles.submittedMessage}>Submitted capture for today!</ThemedText>
         ) : (
           <View style={styles.buttons}>
             <Pressable 
-              style={styles.button}
+              style={[styles.button, {backgroundColor: theme.background}]}
               onPress={() => router.push('/camera')}
             >
               <ThemedText type="overline">
@@ -103,7 +107,7 @@ export default function Analyze() {
 
             {passingColors.length > 0 ?
               <Pressable 
-                style={styles.button}
+                style={[styles.button, {backgroundColor: theme.background}]}
                 onPress={handleSubmit}
               > 
                 <ThemedText type="overline">Submit</ThemedText>
@@ -114,17 +118,15 @@ export default function Analyze() {
           </View>
         )
       }
-    </ThemedView>
+      </View>
+      
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   body: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#C1876B',
-    gap: 50,
   },
   photoTaken: {
     width: width - 20,
@@ -140,6 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     top: height / 2 - width / 2 -100,
+    left: 10,
   },
   paletteItem: {
     flex: 1,
@@ -148,19 +151,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  infoContainer: {
+    position: 'absolute',
+    top: height / 2 + width / 2 + 10,
+    left: 10,
+    width: width - 20,
+    // backgroundColor: 'white',
+  },
   buttons: {
-    top: height / 2 - width / 2 + 50,
     flexDirection: 'row',
     gap: 10,
+    justifyContent: 'center',
   },
   button: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#ffffff33',
     borderRadius: 8,
   },
   submittedMessage: {
-    top: height / 2 - width / 2 + 50,
+    textAlign: 'center',
+    paddingVertical: 10,
   }
 
 });

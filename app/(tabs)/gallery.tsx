@@ -1,14 +1,15 @@
+import { ThemedText } from '@/components/themed-text';
+import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
+import { BlurView } from 'expo-blur';
 import { useEffect, useState } from 'react';
 import { Dimensions, Image, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 
 const { width, height } = Dimensions.get('window');
 
 
 export default function HomeScreen() {
+  const { theme } = useDailyColor();
   const [loading, setLoading] = useState(true);
   const [captures, setCaptures] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -41,28 +42,38 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <ThemedView style={styles.body}>
-      <ThemedView style={styles.header}>  
+    <View style={[styles.body, {backgroundColor: theme.main}]}>
+      <BlurView
+        intensity={40}
+        tint="light"
+        style={[StyleSheet.absoluteFill, styles.header]}
+      >
         <ThemedText type='title'>{
           today.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-          })}: #C1876B
+          })}: {theme.main}
         </ThemedText>
-      </ThemedView>
+      </BlurView>
+      
       <ScrollView
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            tintColor={theme.neutral}
+            colors={[theme.neutral]}
+            progressViewOffset={104}
+          />
         }
       >  
-        <ThemedView style={styles.gallery}>
+        <View style={styles.gallery}>
         {
           loading ?
             (<ThemedText>Loading</ThemedText>) :
             <>
               {captures.map((capture, index) => {
-                console.log(capture.capture_url);
                 return (
                   <Image
                     key={index}
@@ -74,9 +85,9 @@ export default function HomeScreen() {
               <View style={[styles.capture, styles.filler]} />
             </>
         }
-        </ThemedView>
+        </View>
       </ScrollView>
-    </ThemedView>
+    </View>
   )
 }
 
@@ -90,18 +101,18 @@ const styles = StyleSheet.create({
     top: 0,
     height: 100,
     width: '100%',
-    backgroundColor: '#C1876B',
     justifyContent: 'flex-end',
     alignItems: 'center',
     padding: 20,
+    zIndex: 1,
   },
   gallery: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // justifyContent: 'space-between',
     alignSelf: 'center',
     gap: 4.5,
     marginTop: 104,
+    minHeight: height - 104,
   },
   capture: {
     width: width * 0.33 - 2,

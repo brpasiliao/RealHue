@@ -1,26 +1,19 @@
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import { StyleSheet, Text, TextStyle } from 'react-native';
 
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useDailyColor } from '@/context/dailyColorContext';
 
-export type ThemedTextProps = TextProps & {
-  lightColor?: string;
-  darkColor?: string;
+export type ThemedTextProps = {
+  children?: React.ReactNode;
+  style?: TextStyle;
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'headline' | 'overline' | 'profile';
 };
 
-export function ThemedText({
-  style,
-  lightColor,
-  darkColor,
-  type = 'default',
-  ...rest
-}: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+export function ThemedText({ type = 'default', children, style }: ThemedTextProps) {
+  const { theme } = useDailyColor();
 
   return (
     <Text
       style={[
-        { color },
         type === 'default' ? styles.default : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'profile' ? styles.profile : undefined,
@@ -29,10 +22,12 @@ export function ThemedText({
         type === 'link' ? styles.link : undefined,
         type === 'headline' ? styles.headline : undefined,
         type === 'overline' ? styles.overline : undefined,
-        style,
+        { color: theme.neutral },
+        style
       ]}
-      {...rest}
-    />
+    >
+      {children}
+    </Text>
   );
 }
 
