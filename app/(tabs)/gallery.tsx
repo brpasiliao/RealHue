@@ -64,8 +64,8 @@ export default function HomeScreen() {
           <RefreshControl 
             refreshing={refreshing} 
             onRefresh={onRefresh} 
-            tintColor={theme.neutral}
-            colors={[theme.neutral]}
+            tintColor={theme.opaque}
+            colors={[theme.opaque]}
             progressViewOffset={104}
           />
         }
@@ -117,8 +117,7 @@ const styles = StyleSheet.create({
     minHeight: height - 104,
   },
   capture: {
-    width: Platform.OS === 'web' ? 430 : '100%',
-    // width: width * 0.33 - 2,
+    width: width * 0.33 - 2,
     height: width * 0.33 - 2,
   },
   filler: {

@@ -39,7 +39,7 @@ export default function Login() {
         <View> 
           <ThemedText type="default">Email: </ThemedText>
           <TextInput 
-            style={[styles.inputField, {backgroundColor: theme.active}]}
+            style={[styles.inputField, {backgroundColor: theme.leastOpaque, color: theme.lessOpaque}]}
             value={email}
             onChangeText={setEmail}
             onBlur={() => {
@@ -59,7 +59,7 @@ export default function Login() {
         <View> 
           <ThemedText type="default">Password: </ThemedText>
           <TextInput 
-            style={[styles.inputField, {backgroundColor: theme.active}]}
+            style={[styles.inputField, {backgroundColor: theme.leastOpaque, color: theme.lessOpaque}]}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={true} 
@@ -68,7 +68,7 @@ export default function Login() {
 
         <Pressable 
           onPress={handleLogIn}
-          style={[styles.actionButton, {backgroundColor: theme.active, borderColor: theme.neutral}]}
+          style={[styles.actionButton, {backgroundColor: theme.leastOpaque, borderColor: theme.opaque}]}
         >
           <ThemedText type="default">Log in</ThemedText>
         </Pressable>
@@ -77,9 +77,9 @@ export default function Login() {
         </ThemedText>
         
         <View style={styles.span}>
-          <ThemedText type="default">Don't have an account?</ThemedText>
+          <ThemedText type="default">Don't have an account? </ThemedText>
           <Pressable onPress={() => router.push('./signup')}>
-            <ThemedText type="default"> Sign Up</ThemedText>
+            <ThemedText type="link">Sign Up</ThemedText>
           </Pressable>
         </View>
         

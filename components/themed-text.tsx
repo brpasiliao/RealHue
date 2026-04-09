@@ -22,7 +22,7 @@ export function ThemedText({ type = 'default', children, style }: ThemedTextProp
         type === 'link' ? styles.link : undefined,
         type === 'headline' ? styles.headline : undefined,
         type === 'overline' ? styles.overline : undefined,
-        { color: theme.neutral },
+        { color: theme.opaque },
         style
       ]}
     >
@@ -37,8 +37,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   profile: {
-    fontSize: 20,
+    fontSize: 24,
     lineHeight: 24,
+    fontWeight: 'bold',
   },
   defaultSemiBold: {
     fontSize: 16,
@@ -55,9 +56,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   link: {
-    lineHeight: 30,
     fontSize: 16,
-    color: '#0a7ea4',
+    lineHeight: 24,
+    textDecorationLine: 'underline', 
   },
   headline: {
     fontSize: 48,

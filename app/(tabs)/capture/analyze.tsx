@@ -112,7 +112,7 @@ export default function Analyze() {
         ) : (
           <View style={styles.buttons}>
             <Pressable 
-              style={[styles.button, {backgroundColor: theme.background}]}
+              style={[styles.button, {backgroundColor: theme.leastOpaque}]}
               onPress={() => router.push('/camera')}
             >
               <ThemedText type="overline">
@@ -122,7 +122,7 @@ export default function Analyze() {
 
             {passingColors.length > 0 ?
               <Pressable 
-                style={[styles.button, {backgroundColor: theme.background}]}
+                style={[styles.button, {backgroundColor: theme.leastOpaque}]}
                 onPress={handleSubmit}
               > 
                 <ThemedText type="overline">Submit</ThemedText>

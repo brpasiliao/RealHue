@@ -25,7 +25,7 @@ export default function Prompt() {
       <ThemedText type="overline">Today's color is</ThemedText>
       <ThemedText type="headline">{theme.main}</ThemedText>
       <Pressable 
-        style={[styles.captureButton, {backgroundColor: theme.background}]} 
+        style={[styles.captureButton, {backgroundColor: theme.leastOpaque}]} 
         onPress={() => {
           router.push('/camera');
         }}
@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: '#C1876B',
     gap: 50,
   },
   captureButton: {

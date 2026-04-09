@@ -54,7 +54,7 @@ export default function Signup() {
         <View> 
           <ThemedText type='default'>Email: </ThemedText>
           <TextInput 
-            style={[styles.inputField, {backgroundColor: theme.active}]}
+            style={[styles.inputField, {backgroundColor: theme.leastOpaque, color: theme.lessOpaque}]}
             value={email}
             onChangeText={setEmail}
             onBlur={() => {
@@ -74,7 +74,7 @@ export default function Signup() {
         <View> 
           <ThemedText type='default'>Username: </ThemedText>
           <TextInput 
-            style={[styles.inputField, {backgroundColor: theme.active}]}
+            style={[styles.inputField, {backgroundColor: theme.leastOpaque, color: theme.lessOpaque}]}
             value={username}
             onChangeText={setUsername}
             placeholder="user_name"
@@ -84,7 +84,7 @@ export default function Signup() {
         <View> 
           <ThemedText type='default'>Password: </ThemedText>
           <TextInput 
-            style={[styles.inputField, {backgroundColor: theme.active}]}
+            style={[styles.inputField, {backgroundColor: theme.leastOpaque, color: theme.lessOpaque}]}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={true} 
@@ -94,7 +94,7 @@ export default function Signup() {
         <View> 
           <ThemedText type='default'>Repeat password: </ThemedText>
           <TextInput 
-            style={[styles.inputField, {backgroundColor: theme.active}]}
+            style={[styles.inputField, {backgroundColor: theme.leastOpaque, color: theme.lessOpaque}]}
             value={rePassword}
             onChangeText={setRePassword}
             secureTextEntry={true} 
@@ -106,7 +106,7 @@ export default function Signup() {
         </View>
 
         <Pressable 
-          style={[styles.actionButton, {backgroundColor: theme.active, borderColor: theme.neutral}]}
+          style={[styles.actionButton, {backgroundColor: theme.leastOpaque, borderColor: theme.opaque}]}
           onPress={handleSignUp}
         >
           <ThemedText type='default'>Sign Up</ThemedText>
@@ -116,9 +116,9 @@ export default function Signup() {
         </ThemedText>
         
         <View style={styles.span}>
-          <ThemedText type='default'>Already have an account?</ThemedText>
+          <ThemedText type='default'>Already have an account? </ThemedText>
           <Pressable onPress={() => router.dismissTo('./login')}>
-            <ThemedText type='default'> Log in</ThemedText>
+            <ThemedText type='link'>Log in</ThemedText>
           </Pressable>
         </View>
         
@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
   },
   inputField: {
     padding: 10,
-    color: 'white',
   },
   span: {
     flexDirection: 'row',
@@ -145,7 +144,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#ffffff33',
     justifyContent: 'center',
-    borderColor: 'white',
     borderWidth: 2,
   }
 });

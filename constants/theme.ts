@@ -9,16 +9,16 @@ export const Colors = {
   light: {
     name: 'light',
     main: '',
-    neutral: '#EAEAEA',
-    background: '#EAEAEA55',
-    active: '#EAEAEA22',
+    opaque: '#EAEAEA',
+    lessOpaque: '#EAEAEA88',
+    leastOpaque: '#EAEAEA33',
   },
   dark: {
     name: 'dark',
     main: '',
-    neutral: '#151515',
-    background: '#15151555',
-    active: '#15151544',
+    opaque: '#151515',
+    lessOpaque: '#15151588',
+    leastOpaque: '#15151533',
   },
 };
 

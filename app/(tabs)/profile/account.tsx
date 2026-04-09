@@ -1,7 +1,6 @@
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAuth } from '@/context/authContext';
-import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
 import { getThemeFromColor } from '@/utils/color-helper';
 import { BlurView } from 'expo-blur';
@@ -21,7 +20,6 @@ type Profile = {
 
 export default function Account() {
   const { user, session } = useAuth();
-  const { theme } = useDailyColor();
   const [profile, setProfile] = useState<Profile>({username: '', color:''});
   const [captures, setCaptures] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,7 +120,7 @@ export default function Account() {
             style={styles.logOut}
             onPress={handleLogOut}
           >
-            <ThemedText type='profile'>Log out</ThemedText>
+            <ThemedText type='link'>Log out</ThemedText>
           </Pressable>
         </View> 
       </BlurView>
