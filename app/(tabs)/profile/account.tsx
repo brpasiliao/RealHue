@@ -7,9 +7,12 @@ import { getThemeFromColor } from '@/utils/color-helper';
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const width = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
+const height = Platform.OS === 'web' ? Math.min(screenHeight, 800) : screenHeight;
+
 type Profile = {
   username: string;
   color: string;

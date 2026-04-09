@@ -8,10 +8,12 @@ import { isColorMatch } from '@/utils/color-match';
 import { getPalette } from '@/utils/color-palette-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const { width, height } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const width = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
+const height = Platform.OS === 'web' ? Math.min(screenHeight, 800) : screenHeight;
 
 
 export default function Analyze() {

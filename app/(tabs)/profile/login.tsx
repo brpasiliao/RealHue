@@ -3,9 +3,7 @@ import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Dimensions, Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
+import { Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 
 export default function Login() {

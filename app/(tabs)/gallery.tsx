@@ -3,9 +3,11 @@ import { useDailyColor } from '@/context/dailyColorContext';
 import { supabase } from '@/lib/supabase';
 import { BlurView } from 'expo-blur';
 import { useEffect, useState } from 'react';
-import { Dimensions, Image, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const width = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
+const height = Platform.OS === 'web' ? Math.min(screenHeight, 800) : screenHeight;
 
 
 export default function HomeScreen() {
@@ -115,7 +117,8 @@ const styles = StyleSheet.create({
     minHeight: height - 104,
   },
   capture: {
-    width: width * 0.33 - 2,
+    width: Platform.OS === 'web' ? 430 : '100%',
+    // width: width * 0.33 - 2,
     height: width * 0.33 - 2,
   },
   filler: {

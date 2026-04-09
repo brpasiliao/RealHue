@@ -3,9 +3,11 @@ import { useDailyColor } from '@/context/dailyColorContext';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { useRef } from 'react';
-import { Button, Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button, Dimensions, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const width = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
+const height = Platform.OS === 'web' ? Math.min(screenHeight, 800) : screenHeight;
 
 
 export default function Camera() {
